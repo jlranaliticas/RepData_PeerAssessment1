@@ -17,8 +17,29 @@ dataframe ('rData')
 
 *  The 'date' field is converted to date format 
 
-```{r loadData}
+
+```r
 library(dplyr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 library(ggplot2)
 library(scales)
 
@@ -42,14 +63,21 @@ library(scales)
 
 *  A histogram by day is generated
 
-``` {r MeanStepsPerDay}
+
+```r
 ##
 ## What is mean total number of steps taken per day?
 ##         
         sumSteps <- rData[complete.cases(rData),] %>% 
                                 group_by(date) %>% 
                                         summarize(totSteps = sum(steps))
+```
 
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
         mean_steps <- mean(sumSteps$totSteps)
         median_steps <- median(sumSteps$totSteps)
         mean_text <- paste("Mean # steps (BEFORE resolving missing values) = ", mean_steps)
@@ -69,8 +97,24 @@ library(scales)
                       x = "Number of Steps",
                       y = "Count of Days"
                 )
+```
+
+![](PA1_template_files/figure-html/MeanStepsPerDay-1.png)<!-- -->
+
+```r
         mean_text
+```
+
+```
+## [1] "Mean # steps (BEFORE resolving missing values) =  10766.1886792453"
+```
+
+```r
         median_text
+```
+
+```
+## [1] "Median # steps (BEFORE resolving missing values) =  10765"
 ```
 
 
@@ -84,8 +128,8 @@ library(scales)
 
 *  Maximum number of steps at an interval are calculated.
 
-``` {r avgactivity}
 
+```r
 ##
 ## What is the average daily activity pattern?
 ##
@@ -94,6 +138,13 @@ library(scales)
         intMean <- rData[complete.cases(rData),] %>% 
                          group_by (interval) %>% 
                                 summarize(newSteps = mean(steps))
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
         y <- intMean$newSteps[which.max(intMean$newSteps)]
         x <- intMean$interval[which.max(intMean$newSteps)]
         intNum <- which.max(intMean$newSteps)
@@ -111,9 +162,17 @@ library(scales)
                         x = "5 minute Interval",
                         y = "Number of Steps"
                 )
+```
+
+![](PA1_template_files/figure-html/avgactivity-1.png)<!-- -->
+
+```r
         max_steps <- gsub("the \n ", "the", max_steps)
         max_steps
-        
+```
+
+```
+## [1] "206 steps occurred at the 104th 5 minute interval"
 ```
 
 
@@ -130,7 +189,8 @@ library(scales)
 
 *  Mean and median values are re-calculated and compared to the previously captured numbers.
 
-``` {r CleanData}
+
+```r
 ##
 ## Imputing missing values
 ##
@@ -143,7 +203,13 @@ library(scales)
         sumSteps_clean <- rData_clean[complete.cases(rData_clean),] %>% 
                 group_by(date) %>% 
                 summarize(totSteps = sum(newSteps))
-        
+```
+
+```
+## `summarise()` ungrouping output (override with `.groups` argument)
+```
+
+```r
         mean_steps_clean <- mean(sumSteps_clean$totSteps)
         median_steps_clean <- median(sumSteps_clean$totSteps)
         mean_text <- paste("Mean # steps (AFTER resolving missing values) = ", mean_steps_clean)
@@ -163,14 +229,42 @@ library(scales)
                         x = "Number of Steps",
                         y = "Count of Days"
                 )
-        
+```
+
+![](PA1_template_files/figure-html/CleanData-1.png)<!-- -->
+
+```r
         mean_steps_clean <- mean(sumSteps_clean$totSteps)
         median_steps_clean <- median(sumSteps_clean$totSteps)
         mean_text
+```
+
+```
+## [1] "Mean # steps (AFTER resolving missing values) =  10766.1886792453"
+```
+
+```r
         mean_steps_clean
+```
+
+```
+## [1] 10766.19
+```
+
+```r
         median_text
+```
+
+```
+## [1] "Median # steps (AFTER resolving missing values) =  10765"
+```
+
+```r
         median_steps_clean
-        
+```
+
+```
+## [1] 10765
 ```
 
 ### Conclusions:
@@ -190,7 +284,8 @@ library(scales)
 
 *  A 2-panel histogram is plotted 
 
-``` {r activitypattern}
+
+```r
 ##
 ## Are there differences in activity patterns between weekdays and weekends
 
@@ -202,7 +297,13 @@ library(scales)
         intMean <- rData_clean[complete.cases(rData_clean),] %>% 
                 group_by (weekday_indicator, interval) %>% 
                 summarize(newSteps = mean(newSteps))
-        
+```
+
+```
+## `summarise()` regrouping output by 'weekday_indicator' (override with `.groups` argument)
+```
+
+```r
         weekday_max <- which.max(filter(intMean,weekday_indicator == "weekday")$newSteps)
         weekend_max <- which.max(filter(intMean,weekday_indicator == "weekend")$newSteps)
         weekday_tag <- paste("Weekday max steps =", weekday_max)
@@ -216,9 +317,23 @@ library(scales)
                         y = "Number of Steps"
                 ) +
                 facet_wrap(~ weekday_indicator, dir = "v") 
-        
-        paste("Maximum number of weekday steps = ", format(round(intMean$newSteps[weekday_max],0)))
-        paste("Maximum number of weekend steps = ", format(round(intMean$newSteps[weekend_max],0)))
+```
 
+![](PA1_template_files/figure-html/activitypattern-1.png)<!-- -->
+
+```r
+        paste("Maximum number of weekday steps = ", format(round(intMean$newSteps[weekday_max],0)))
+```
+
+```
+## [1] "Maximum number of weekday steps =  234"
+```
+
+```r
+        paste("Maximum number of weekend steps = ", format(round(intMean$newSteps[weekend_max],0)))
+```
+
+```
+## [1] "Maximum number of weekend steps =  84"
 ```
 
